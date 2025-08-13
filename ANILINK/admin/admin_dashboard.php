@@ -1,28 +1,13 @@
 <?php
-// Database connection
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "anilink_db";
+    include_once 'config.php';
+    include_once 'sidebar.php';
+    include_once 'header.php';
 
-$conn = new mysqli($host, $user, $pass, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Example query (count users)
 $total_users = $conn->query("SELECT COUNT(*) AS total FROM users")->fetch_assoc()['total'];
 $total_crops = $conn->query("SELECT COUNT(*) AS total FROM crops")->fetch_assoc()['total'];
 $total_orders = $conn->query("SELECT COUNT(*) AS total FROM orders")->fetch_assoc()['total'];
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AniLink Admin Dashboard</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
 <style>
     body {
         background: linear-gradient(120deg, #4CAF50, #8BC34A);
@@ -81,16 +66,6 @@ $total_orders = $conn->query("SELECT COUNT(*) AS total FROM orders")->fetch_asso
 </head>
 <body>
 
-<!-- Sidebar -->
-<div class="sidebar" id="sidebar">
-    <h4 class="text-center mb-4"><i class="fa-solid fa-leaf"></i> AniLink</h4>
-    <a href="#"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-    <a href="#"><i class="fa-solid fa-users"></i> Manage Users</a>
-    <a href="#"><i class="fa-solid fa-seedling"></i> Manage Crops</a>
-    <a href="#"><i class="fa-solid fa-cart-shopping"></i> Orders</a>
-    <a href="#"><i class="fa-solid fa-credit-card"></i> Payments</a>
-    <a href="#"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-</div>
 
 <!-- Content -->
 <div class="content" id="content">
