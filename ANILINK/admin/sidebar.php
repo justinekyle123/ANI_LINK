@@ -1,3 +1,5 @@
+<!-- Overlay for mobile -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
 
 <div class="sidebar" id="sidebar">
     <h4 class="text-center mb-4"><i class="fa-solid fa-leaf"></i> AniLink</h4>

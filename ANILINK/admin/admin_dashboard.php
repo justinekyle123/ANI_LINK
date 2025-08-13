@@ -1,11 +1,11 @@
 <?php
-    include_once 'config.php';
-    include_once 'sidebar.php';
-    include_once 'header.php';
+include_once 'config.php';
+include_once 'sidebar.php';
+include_once 'header.php';
 
-$total_users = $conn->query("SELECT COUNT(*) AS total FROM users")->fetch_assoc()['total'];
-$total_crops = $conn->query("SELECT COUNT(*) AS total FROM crops")->fetch_assoc()['total'];
-$total_orders = $conn->query("SELECT COUNT(*) AS total FROM orders")->fetch_assoc()['total'];
+$total_users = $conn->query("SELECT COUNT(*) AS total FROM users")->fetch_assoc()['total'] ?? 0;
+$total_crops = $conn->query("SELECT COUNT(*) AS total FROM crops")->fetch_assoc()['total'] ?? 0;
+$total_orders = $conn->query("SELECT COUNT(*) AS total FROM orders")->fetch_assoc()['total'] ?? 0;
 ?>
 
 <style>
@@ -14,20 +14,45 @@ $total_orders = $conn->query("SELECT COUNT(*) AS total FROM orders")->fetch_asso
         font-family: 'Segoe UI', sans-serif;
         overflow-x: hidden;
     }
+
+    /* Loading screen */
+    #loading-screen {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: #4CAF50;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+    }
+    .loading-spinner {
+        border: 6px solid rgba(255,255,255,0.3);
+        border-top: 6px solid #fff;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Sidebar */
     .sidebar {
         background: #388E3C;
-        min-height: 100vh;
+        height: 100vh;
         color: #fff;
         padding-top: 20px;
         position: fixed;
-        left: 0;
+        left: -240px;
         top: 0;
         width: 240px;
-        transform: translateX(-240px);
         transition: all 0.4s ease;
+        z-index: 1000;
     }
     .sidebar.active {
-        transform: translateX(0);
+        left: 0;
     }
     .sidebar a {
         color: #fff;
@@ -40,19 +65,36 @@ $total_orders = $conn->query("SELECT COUNT(*) AS total FROM orders")->fetch_asso
         background: rgba(255, 255, 255, 0.2);
         padding-left: 30px;
     }
+
+    /* Content */
     .content {
-        margin-left: 0;
-        transition: all 0.4s ease;
         padding: 20px;
+        transition: margin-left 0.4s ease;
     }
-    .content.active {
+    .content.shift {
         margin-left: 240px;
     }
+
+    /* Toggle Button */
     .toggle-btn {
         font-size: 24px;
         cursor: pointer;
         color: white;
     }
+
+    /* Overlay for mobile */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: rgba(0,0,0,0.5);
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 900;
+    }
+
+    /* Card style */
     .card {
         border: none;
         border-radius: 12px;
@@ -66,6 +108,13 @@ $total_orders = $conn->query("SELECT COUNT(*) AS total FROM orders")->fetch_asso
 </head>
 <body>
 
+<!-- Loading Animation -->
+<div id="loading-screen">
+    <div class="loading-spinner"></div>
+</div>
+
+<!-- Overlay for mobile -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
 
 <!-- Content -->
 <div class="content" id="content">
@@ -98,10 +147,47 @@ $total_orders = $conn->query("SELECT COUNT(*) AS total FROM orders")->fetch_asso
 
 <script>
     const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebar-overlay");
+    const toggleBtn = document.getElementById("toggle-btn");
     const content = document.getElementById("content");
-    document.getElementById("toggle-btn").addEventListener("click", function(){
+
+    function toggleSidebar() {
         sidebar.classList.toggle("active");
-        content.classList.toggle("active");
+
+        if (window.innerWidth >= 992) { // Desktop
+            content.classList.toggle("shift");
+        } else { // Mobile
+            overlay.style.display = sidebar.classList.contains("active") ? "block" : "none";
+        }
+    }
+
+    toggleBtn.addEventListener("click", toggleSidebar);
+    overlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        overlay.style.display = "none";
+    });
+
+    window.addEventListener("resize", () => {
+        if (window.innerWidth >= 992) {
+            overlay.style.display = "none";
+            if (!sidebar.classList.contains("active")) {
+                sidebar.classList.add("active");
+                content.classList.add("shift");
+            }
+        } else {
+            content.classList.remove("shift");
+            sidebar.classList.remove("active");
+        }
+    });
+
+    if (window.innerWidth >= 992) {
+        sidebar.classList.add("active");
+        content.classList.add("shift");
+    }
+
+    // Loading animation hide
+    window.addEventListener("load", () => {
+        document.getElementById("loading-screen").style.display = "none";
     });
 </script>
 </body>
