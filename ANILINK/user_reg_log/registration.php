@@ -7,8 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $pass = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $role = $_POST['role'];
 
-    $sql = "INSERT INTO users (name, email, password, role, status) 
-            VALUES ('$name', '$email', '$pass', '$role', 'pending')";
+    $sql = "INSERT INTO users (name, email, password, role, location, contact_no, verified) 
+            VALUES ('$name', '$email', '$pass', '$role', '', '', 0)";
     if ($conn->query($sql)) {
         echo "<script>alert('Registration submitted! Please wait for admin approval.'); window.location='login.php';</script>";
     } else {
@@ -24,9 +24,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <style>
-    body {
-        background: url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6') no-repeat center center/cover;
+    body, html {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
         font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(120deg, #4CAF50, #8BC34A);
+    }
+    svg {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
     }
     .register-box {
         max-width: 450px;
@@ -38,6 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         color: white;
         animation: slideDown 0.8s ease;
+        z-index: 2;
+        position: relative;
     }
     .register-box h3 {
         text-align: center;
@@ -69,6 +80,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
 
+<!-- SVG Animated Background -->
+<svg>
+    <circle cx="20%" cy="20%" r="80" fill="rgba(255,255,255,0.1)">
+        <animate attributeName="cx" values="20%;80%;20%" dur="10s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="20%;80%;20%" dur="12s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="80%" cy="80%" r="100" fill="rgba(255,255,255,0.15)">
+        <animate attributeName="cx" values="80%;20%;80%" dur="15s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="80%;30%;80%" dur="18s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="50%" cy="50%" r="60" fill="rgba(255,255,255,0.05)">
+        <animate attributeName="r" values="60;100;60" dur="8s" repeatCount="indefinite"/>
+    </circle>
+</svg>
+
 <div class="register-box">
     <h3><i class="fa-solid fa-seedling"></i> AniLink Registration</h3>
     <form method="POST">
@@ -88,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <label><i class="fa-solid fa-user-tag"></i> Role</label>
             <select name="role" class="form-control" required>
                 <option value="farmer">Farmer</option>
-                <option value="buyer">Buyer</option>
+                <option value="market">Market</option>
             </select>
         </div>
         <button type="submit" class="btn btn-success w-100">Register</button>
